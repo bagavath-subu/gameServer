@@ -10,21 +10,28 @@ const io = socketIo(server);
 
 app.use(cors())
 
-const user = {}
+let user = {}
 
 
 io.on("connection", socket => {
     socket.on('user-name', name => {
         user[socket.id] = name
-        console.log(name)
+        console.log(name, "  connected")
         socket.broadcast.emit('User-connected', name)
     })
 
-    socket.on('stateChanged', function (state) {
+    socket.on('stateChanged', (state) => {
+        state.name = user[socket.id]
+        console.log("Users", user, "socket", socket.id, "State Changed : ", user[socket.id])
         socket.broadcast.emit("updateState", state);
     });
 
-    socket.on("disconnect", () => console.log("Client disconnected"));
+    socket.on('bingo', () => {
+        const name = user[socket.id]
+        socket.broadcast.emit("GameOver", name);
+    });
+    
+    socket.on("disconnect", () => console.log("Client disconnected", socket.id));
 });
 
 
