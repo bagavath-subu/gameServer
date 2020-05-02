@@ -12,6 +12,9 @@ app.use(cors())
 
 let user = {}
 
+app.get('/', (req, res) => {
+    res.send("welcome to game server")
+})
 
 io.on("connection", socket => {
     socket.on('user-name', name => {
@@ -30,7 +33,7 @@ io.on("connection", socket => {
         const name = user[socket.id]
         socket.broadcast.emit("GameOver", name);
     });
-    
+
     socket.on("disconnect", () => console.log("Client disconnected", socket.id));
 });
 
